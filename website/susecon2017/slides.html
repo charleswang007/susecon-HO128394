@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta name="generator" content="jemdoc, see http://jemdoc.jaboc.net/" />
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link rel="stylesheet" href="jemdoc.css" type="text/css" />
+<title>Slides</title>
+</head>
+<body>
+<table summary="Table for page layout." id="tlayout">
+<tr valign="top">
+<td id="layout-menu">
+<div class="menu-category">About</div>
+<div class="menu-item"><a href="people.html">People</a></div>
+<div class="menu-item"><a href="intro.html">Introduction</a></div>
+<div class="menu-category">Presentation</div>
+<div class="menu-item"><a href="slides.html">Slides</a></div>
+<div class="menu-category">Lab Manual</div>
+<div class="menu-item"><a href="lab2017.html">Lab 2017</a></div>
+<div class="menu-category">Miscellaneous</div>
+<div class="menu-item"><a href="reference.html">Vagrant</a></div>
+<div class="menu-item"><a href="reference.html">OpenStack-HA</a></div>
+<div class="menu-category">Home</div>
+<div class="menu-item"><a href="index.html">Index</a></div>
+</td>
+<td id="layout-content">
+<div id="toptitle">
+<h1>Slides</h1>
+<div id="subtitle">
+</div>
+</div>
+<h2>Source</h2>
+<p>Compute Node HA in OpenStack - Theory  (<a href="Files/HO128394.pdf" target="_blank">HO128394.pdf</a>)</p>
+<p>Compute Node HA in OpenStack - Hands On  (<a href="Files/HO128394-lab.pdf" target="_blank">HO128394-lab.pdf</a>)</p>
+<h2>Summary</h2>
+<br>
+<p><b># Typical HA Control Plane</b></p>
+<p>	- Automatic restart of controller services</p>
+<p>	- Increases uptime of cloud</p>
+<br>
+<p><b># When is Compute HA important?</b></p>
+<p>- Pets vs Cattle</p>
+<p>- Pet: Service downtime when a pet dies</p>
+<p>- Pet: VM instances often stateful, with mission-critical data</p>
+<p>- Pet: Needs automated recovery with data protection</p>
+<p>- Cattle: Service resilient to instances dying</p>
+<p>- Cattle: Stateless, or ephemeral (disposable storage)</p>
+<p>- Cattle: Already ideal for cloud ?but automated recovery still needed!</p>
+<br>
+<p><b># If compute node is hosting cattle</b></p>
+<p>- to handle failures at scale, we need to automatically restart VMs somehow.</p>
+<br>
+<p><b># If compute node is hosting pets</b></p>
+<p>- we have to resurrect very carefully in order to avoid any zombie pets!</p>
+<br>
+<p><b># Do we really need compute HA in OpenStack?</b></p>
+<p>- Compute HA needed for cattle as well as pets</p>
+<p>- Valid reasons for running pets in OpenStack</p>
+<p>- Manageability benefits</p>
+<p>- Want to avoid multiple virtual estates</p>
+<p>- Too expensive to cloudify legacy workloads</p>
+<br>
+<p><b># Architectural Challenges</b></p>
+<p>- Configurability</p>
+<p>- Compute Plane Needs to Scale</p>
+<p>- Full Mesh Clusters Don't Scale</p>
+<br>
+<p><b># Addressing Scalability</b></p>
+<p>- The obvious workarounds are ugly!</p>
+<p>- Multiple compute clusters introduce unwanted artificial boundaries</p>
+<p>- Clusters inside / between guest VM instances are not OS-agnostic, and require cloud users to modify guest images (installing & configuring cluster software)</p>
+<p>- Cloud is supposed to make things easier not harder!</p>
+<br>
+<p><b># Compute HA in SUSE OpenStack Cloud</b></p>
+<p>- NovaCompute / NovaEvacuate OCF Agents</p>
+<p>- Pros</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Ready for production now</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Commercially supported by SUSE</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;RAs upstream in openstack-resource-agents repo:</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/openstack/openstack-resource-agents/tree/master/ocf</p>
+<p>- Cons</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Known limitations (known bugs):</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Only handles failure of compute node, not of VMs, or nova-compute</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Some corner cases still problematic, e.g. if nova fails during recovery</p>
+<br>
+<p><b># Shared Storage</b></p>
+<p>- Where can we have Shared Storage? (Two key areas)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;/var/lib/glance/images on controller nodes</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;/var/lib/nova/instances on compute nodes</p>
+<p>- When do we need Shared Storage?</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;If /var/lib/nova/instances is shared, VM's ephemeral disk will be preserved during recovery</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Otherwise: VM disk will be lost, recovery will need to rebuild VM from image</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Either way, /var/lib/glance/images should be shared across all controllers (unless using Swift / Ceph)
+otherwise nova might fail to retrieve image from glance</p>

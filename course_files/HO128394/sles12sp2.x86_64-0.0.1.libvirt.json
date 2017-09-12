@@ -1,0 +1,15 @@
+{
+   "description" : "SLES 12 SP2",
+   "versions" : [
+      {
+         "providers" : [
+            {
+               "url" : "sles12sp2.x86_64-0.0.1.libvirt.box",
+               "name" : "libvirt"
+            }
+         ],
+         "version" : "0.0.1"
+      }
+   ],
+   "name" : "suse/sles12sp2"
+}

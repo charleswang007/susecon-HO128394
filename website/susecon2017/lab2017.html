@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-// W3C// DTD XHTML 1.1// EN"
+  "http:// www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http:// www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta name="generator" content="jemdoc, see http:// jemdoc.jaboc.net/" />
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link rel="stylesheet" href="jemdoc.css" type="text/css" />
+<title>Lab2017</title>
+<style type="text/css">
+<!--
+.style4 {color: #FF6600}
+.style6 {color: #999999}
+.style7 {color: #009966}
+-->
+</style>
+</head>
+<body>
+<table summary="Table for page layout." id="tlayout">
+<tr valign="top">
+<td id="layout-menu">
+<div class="menu-category">About</div>
+<div class="menu-item"><a href="people.html">People</a></div>
+<div class="menu-item"><a href="intro.html">Introduction</a></div>
+<div class="menu-category">Presentation</div>
+<div class="menu-item"><a href="slides.html">Slides</a></div>
+<div class="menu-category">Lab Manual</div>
+<div class="menu-item"><a href="lab2017.html">Lab 2017</a></div>
+<div class="menu-category">Miscellaneous</div>
+<div class="menu-item"><a href="reference.html">Vagrant</a></div>
+<div class="menu-item"><a href="reference.html">OpenStack-HA</a></div>
+<div class="menu-category">Home</div>
+<div class="menu-item"><a href="index.html">Index</a></div>
+</td>
+<td id="layout-content">
+<div id="toptitle">
+<h1>Lab 2017</h1>
+<div id="subtitle"></div>
+</div>
+<h2>References</h2>
+<p><a href="Files/HO128394-lab.pdf" target="_blank">HO128394-lab.pdf</a>
+<h2>Prerequisites</h2>
+<p>1. <b>Hardware</b>: x86_64 machine with hardware virtualization capability (Intel VT-x or AMD-V) enabled in the BIOS, </p>
+<p>and at least ~16GB spare disk and 3GB RAM</p>
+<p>2. <b>Hypervisor</b> (KVM & Libvirt): zypper install -t pattern kvm_server (OpenSUSE)</p>
+<p>3. <b>Vagrant</b> >= 1.6.5</p>
+<h2>My Environment</h2>
+<img src="Images/env.png" alt="" width="500"/>
+<h2>Installation</h2>
+<p><span class="style4">Get installaton source</span></p>
+<p>git clone <a href="https://github.com/SUSE-Cloud/suse-cloud-vagrant.git" target="_blank">https://github.com/SUSE-Cloud/suse-cloud-vagrant.git</a></p>
+<p><span class="style4">Install vagrant & libvirt</span></p>
+<p>wget <a href="https://releases.hashicorp.com/vagrant/1.8.7/vagrant_1.8.7_x86_64.rpm" target="_blank">https://releases.hashicorp.com/vagrant/1.8.7/vagrant_1.8.7_x86_64.rpm</a> vagrant.rpm</p>
+<p>sudo zypper install in vagrant.rpm</p>
+<p>vagrant plugin install vagrant-libvirt</p>
+<p>(OR <a href="https://software.opensuse.org/package/vagrant" target="_blank">https://software.opensuse.org/package/vagrant</a>)</p>
+<p>(OR <a href="https://software.opensuse.org/package/rubygem-vagrant-libvirt" target="_blank">https://software.opensuse.org/package/rubygem-vagrant-libvirt</a>)</p>
+<p><span class="style4">Add boxes</span></p>
+<p>vagrant box add suse/sles12sp2 &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// not working, 503 Service Unavailable</span></p>
+<p>vagrant box add suse/cloud7-admin &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// not working, 503 Service Unavailable</span></p>
+<p><span class="style4">Add boxes (temporary workaround)</span></p>
+<p>download suse/cloud7-admin & suse/sles12sp2 box/json from http://beta.suse.com/private/SUSE-CLOUD/cloud7-vagrant/</p>
+<p>cd ~/Downloads</p>
+<p>vagrant box add cloud7-admin-vagrant.x86_64-0.0.1.libvirt.json</p>
+<p>vagrant box add sles12sp2.x86_64-0.0.1.libvirt.json</p>
+<p><span class="style4">Vagrant up</span></p>
+<p>cd ~/suse-cloud-vagrant/vagrant</p>
+<p>vagrant up admin && vagrant up</p>
+<p><span class="style4">Verification</span></p>
+<p>browse 192.168.124.10 (credential: crowbar/crowbar), all 5 nodes should be up</p>
+<p><span class="style4">Setup nodes on admin</span></p>
+<p>vagrant ssh admin &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// q then y to accept end-user license agreement (EULA)</span></p>
+<p>sudo -i</p>
+<p>/root/bin/setup-node-aliases.sh</p>
+<p>crowbar batch build HA-compute-cloud-demo.yaml</p>
+<p>exit</p>
+<p><span class="style4">Setup nodes on either controller</span></p>
+<p>vagrant ssh controller1</p>
+<p>sudo -i</p>
+<p>/root/bin/upload-cirros</p>
+<p>exit</p>
+<p><span class="style4">Verification</span></p>
+<p>browse 192.168.124.10 or localhost:8000 (credential: crowbar/crowbar), all 5 nodes should be renamed and in Ready state</p>
+<p><span class="style4">Add remotes to Pacemaker cluster</span></p>
+<p>browse 192.168.124.10, edit pacemaker "service" barclamp</p>
+<p>drag compute1 & compute2 to "Deployment" --> "pacemaker-remote" section</p>
+<p>make sure "Configuration mode for STONITH" is set to SBD</p>
+<p>make compute1 & compute2 have "/dev/vdb" as their "Block devices for node"</p>
+<p>click "Apply" button after finish</p>
+<p><span class="style4">Monitor proposal progress (optional)</span></p>
+<p>vagrant ssh admin</p>
+<p>sudo -i</p>
+<p>tail -f /var/log/crowbar/production.log</p>
+<p>tail -f /var/log/crowbar/chef-client/*.log</p>
+<p><span class="style4">Check status of cluster nodes and remotes</span></p>
+<p>vagrant ssh controller1</p>
+<p>sudo -i</p>
+<p>crm status</p>
+<p><span class="style4">Nova setup</span></p>
+<p><p>browse 192.168.124.10, edit nova barclamp</p>
+<p>drag "services" to section "nova-controller" (might alreay be done)</p>
+<p>drag "services (2 remote notes)" to section "nova-compute-kvm"</p>
+<p>click "Apply" button after finish</p>
+<p><span class="style4">Monitor proposal progress (optional)</span></p>
+<p>vagrant ssh admin</p>
+<p>sudo -i</p>
+<p>tail -f /var/log/crowbar/production.log</p>
+<p>tail -f /var/log/crowbar/chef-client/*.log</p>
+<p><span class="style4">Check status of nova resources in cluster</span></p>
+<p>vagrant ssh controller1</p>
+<p>sudo -i</p>
+<p>crm status</p>
+<p><span class="style4">Setup shared storage (use admin's NFS server)</span></p>
+<p>Locate shared directories via nfs_client barclamp</p>
+<p>Check /etc/exports on admin server</p>
+<p>Check /etc/fstab on controller/compute nodes</p>
+<p>Run mount on controller/compute nodes</p>
+<p><span class="style4">Boot a VM</span></p>
+<p>vagrant ssh controller1</p>
+<p>sudo -i</p>
+<p>source .openrc</p>
+<p>openstack image list &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// get image name</span></p>
+<p>openstack flavor list &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// get flavor name</span></p>
+<p>neutron net-list &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// get fixed net ID</span></p>
+<p>nova boot --image cirros-machine --flavor m1.tiny --nic net-id=806f0449-9048-4427-a8b6-acd7480d61ff testvm</p>
+<p><span class="style4">Verify VM is booted</span></p>
+<p>nova show testvm</p>
+<p>nova list</p>
+<p><span class="style4">Assign a Floating IP</span></p>
+<p>neutron floatingip-create FLOATING_NET_ID &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// create floating IP</span></p>
+<p>nova list &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// get VM IP</span></p>
+<p>neutron port-list | grep VM_FIXED_IP &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// get port id</span></p>
+<p>neutron floatingip-associate FLOATING_IP_ID PORT_ID &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// associate floating IP with VM port</span></p>
+<p>neutron floatingip-list &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// should have has two associated IPs (fixed + floating)</span></p>
+<p>nova list &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// verify testvm now has two associated IPs (fixed + floating)</span></p>
+<p><span class="style4">Allow ICMP and SSH for VMs</span></p>
+<p><span class="style6">// if there two "defult" security group, just run "openstack security group delete DUPLICATE_GROUP_ID"</span></p>
+<p>openstack security group rule create --proto icmp default</p>
+<p>openstack security group rule create --proto tcp --dst-port 22 default</p>
+<p>openstack security group rule list &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// verify tcp + icmp in rules list</span></p>
+<p><span class="style4">Setup monitoring</span></p>
+<p>ping VM_FLOATING_IP &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// ping VM</span></p>
+<p>nova list --fields host,name &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// get compute host</span></p>
+<p>ping host &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// ping host where the VM is running</span></p>
+<p>crm resource show nova-evacuate &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// find node running nova-evacuate</span></p>
+<p>tail -f /var/log/messages | grep NovaEvacuate &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// on that node, check log messages for NovaEvacuate workflow</span></p>
+<p>crm_mon &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// monitor cluster status</span></p>
+<p><span class="style4">Open permission for console.log in /var/lib/nova</span></p>
+<p>cd /var/lib/ chown -R nova:nova nova &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// option 1</span></p>
+<p>cd /var/lib/ chmod -R 777 nova &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// option 2</span</p>
+
+<h2>Test Compute Node Failover</h2>
+<p>vagrant ssh COMPUTE_HOST</p>
+<p>pkill -9 -f pacemaker_remoted</p>
+
+<h2>Test Result on 9/2</h2>
+<p>Compute1 which runs VM shuts down after "pkill -9 -f pacemaker_remoted", when NovaEvacuate completes and fencing occurrs. VM is evacauted to compute2.</p>
+<h3 class="style7">BEFORE (VM is running on compute1)</h3>
+<p><img src="Images/nova_list_before.PNG" alt="" width="100%"/></p>
+<h3 class="style7">AFTER (VM fails over to compute2)</h3>
+<p><img src="Images/vagrant_status.PNG" alt="" width="100%"/></p>
+<p>/var/log/nova/fence_compute.log on controller2 which runs fence_compute (self-fencing initiates)</p>
+<p><img src="Images/fence_compute.PNG" alt="" width="100%"/></p>
+<p>/var/log/messages on controller2 (NovaEvacuate completes)</p>
+<p><img src="Images/nova_evacuate.PNG" alt="" width="100%"/></p>
+<p>evacuation works</p>
+<p><img src="Images/evacuation_works1.PNG" alt="" width="100%"/></p>
+
+<h2>Expected Output</h2>
+<p>1. Ping to the VM is interrupted, then resumed</p>
+<p>2. Ping to the compute node is interrupted, then resumed</p>
+<p>3. Log messages show:</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;NovaEvacuate [...] Initiating evacuation</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;NovaEvacuate [...] Completed evacuation</p>
+<p>4. crm status shows compute node offline (then back online)</p>
+<p>5. Verify compute node was fenced</p>
+<p>6. Check /var/log/messages on DC</p>
+<p>7. Verify VM moved to another compute node</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;nova list --fields host,name</p>
+

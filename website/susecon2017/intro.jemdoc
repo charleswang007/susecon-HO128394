@@ -1,0 +1,11 @@
+# jemdoc: menu{MENU}{example.html}
+= Introduction
+
+Our main goal is to understand and develop an optimal road network with efficient movement of traffic and minimal traffic congestion problems. If time allows, we will study traffic congestion, which has a significant impact on economic activity throughout the world. By creating an accurate and reliable traffic monitoring and control system, we will have better understanding of interactions between vehicles, drivers, and infrastructure and hence improve our traffic networks.
+
+Our final project will leverage probe vehicle data collected from the Mobile Millennium project to perform traffic estimation while analyzing spatial traffic patterns. Mobile Millennium Is a joint effort of CCIT (California center for innovative transportation), Caltrans, Nokia, and UC Berkeley's Department of Civil and Environmental Engineering in the area of traffic monitoring. The goal of Mobile Millennium was to test traffic data collection from GPS-equipped cell phones driving on a stretch of a highway located in the San Francisco Bay Area. One hundred vehicles carrying the GPS-enabled Nokia N95 drove along a 10-mile stretch of I-880 from 9:30am to 6:30pm.
+
+In addition to this data, we will construct a network model of the measured traffic flows. This will allow us to refine our approximations by observing such traffic flow invariants as preservation of vehicles.
+
+As we approach our TRAFFIC project, we will be using what we have learned throughout EE 127A about least-square estimation, convex optimization and linear programming, and experimenting with real data and applications downloaded from Mobile Century.
+ 

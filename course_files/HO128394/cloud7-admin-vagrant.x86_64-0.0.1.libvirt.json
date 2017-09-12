@@ -1,0 +1,15 @@
+{
+   "name" : "suse/cloud7-admin",
+   "versions" : [
+      {
+         "providers" : [
+            {
+               "url" : "cloud7-admin-vagrant.x86_64-0.0.1.libvirt.box",
+               "name" : "libvirt"
+            }
+         ],
+         "version" : "0.0.1"
+      }
+   ],
+   "description" : "SUSE OpenStack Cloud 7 Admin Server"
+}

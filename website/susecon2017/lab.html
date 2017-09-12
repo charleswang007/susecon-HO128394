@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta name="generator" content="jemdoc, see http://jemdoc.jaboc.net/" />
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link rel="stylesheet" href="jemdoc.css" type="text/css" />
+<title>Slides</title>
+</head>
+<body>
+<table summary="Table for page layout." id="tlayout">
+<tr valign="top">
+<td id="layout-menu">
+<div class="menu-category">About</div>
+<div class="menu-item"><a href="people.html">People</a></div>
+<div class="menu-item"><a href="intro.html">Introduction</a></div>
+<div class="menu-category">Presentation</div>
+<div class="menu-item"><a href="slides.html">Slides</a></div>
+<div class="menu-category">Lab Manual</div>
+<div class="menu-item"><a href="lab2017.html">Lab 2017</a></div>
+<div class="menu-category">Miscellaneous</div>
+<div class="menu-item"><a href="reference.html">Vagrant</a></div>
+<div class="menu-item"><a href="reference.html">OpenStack-HA</a></div>
+<div class="menu-category">Home</div>
+<div class="menu-item"><a href="index.html">Index</a></div>
+</td>
+<td id="layout-content">
+<div id="toptitle">
+<h1>Lab</h1>
+<div id="subtitle">
+</div>
+</div>
+<h2>Source</h2>
+<p>Compute Node HA in OpenStack - Hands On  (<a href="Files/HO128394-lab.pdf" target="_blank">HO128394-lab.pdf</a>)</p>
+<h2>Summary</h2>
+<br>
+<p><b># Workshop Environment</b></p>
+<p>- Whole build is automated and idempotent</p>
+<p>- You can run on any machine with at least 20GB RAM</p>
+<p>- We'll build a miniature cloud on a single machine</p>
+<p>- libvirt + KVM hypervisor</p>
+<p>- 5 VMs: Administration Server (Crowbar) + 2 Control Nodes in an HA cluster + 2 Compute Nodes with HA</p>
+<p>- Vagrant for rapid deployment</p>
+<br>
+<p><b># What is Vagrant?</b></p>
+<p>- Creates and configures lightweight, reproducible, and portable development environments.?</p>
+<p>- Not just for development</p>
+<p>- Perfect for icking the tyres? demoing, testing, etc.</p>
+<p>- Cross-platform (Linux, MacOS X, Windows)</p>
+<p>- Providers for libvirt, VirtualBox, VMware, Hyper-V, Docker, OpenStack, ...</p>
+<br>
+<p><b># Vagrant Inputs</b></p>
+<p>- 1 or more Vagrant ox??pre-built virtual appliances</p>
+<p>- Vagrantfile: Ruby DSL file which defines:</p>
+<p>which box(es) to use</p>
+<p>virtual hardware required</p>
+<p>virtual network topology</p>
+<p>network ports to forward</p>
+<p>hypervisor-specific settings</p>
+<p>files to inject into appliance</p>
+<p>commands to run in appliance</p>
+<p>files to inject</p>
+<br>
+<p><b># Using Vagrant: Crash Course</b></p>
+<p>- vagrant box add suse/cloud5-admin --> 503 Service Unavailable (vagrantcloud.com/suse/boxes/cloud5-admin/versions/0.2.1/providers/libvirt.box)</p>
+<p>- vagrant box add suse/cloud6-admin --> not found on https://app.vagrantup.com/boxes/search</p>
+<p>- vagrant up admin</p>
+<p>- vagrant up controller1</p>
+<p>- vagrant halt controller2</p>
+<p>- vagrant destroy compute1</p>
+<br>
+<p><b># Workshop Vagrant Environment</b></p>
+<p>- Libvirt + KVM pre-installed</p>
+<p>- 2 boxes pre-installed: suse/cloud6-admin and suse/sles12sp1</p>
+<p>- 5 VMs: admin (SUSE OpenStack Cloud 6 Administration Server), controller1, controller2 (will form an HA cluster), compute1, compute2</p>
+<br>
+<p><b># demos/HA</b></p>
+<p>git clone https://github.com/SUSE-Cloud/suse-cloud-vagrant.git</p>
+<p>git checkout susecon2016</p>
