@@ -33,11 +33,17 @@
 <h2>Source</h2>
 <p>Compute Node HA in OpenStack - Theory  (<a href="Files/HO128394.pdf" target="_blank">HO128394.pdf</a>)</p>
 <p>Compute Node HA in OpenStack - Hands On  (<a href="Files/HO128394-lab.pdf" target="_blank">HO128394-lab.pdf</a>)</p>
+<p>Compute Node HA Training (May 2016) (<a href="http://suse.github.io/compute-ha-training/#/about" target="_blank">http://suse.github.io/compute-ha-training/#/about</a>)</p>
 <h2>Summary</h2>
 <br>
 <p><b># Typical HA Control Plane</b></p>
 <p>	- Automatic restart of controller services</p>
 <p>	- Increases uptime of cloud</p>
+<p><img src="Images/controller-HA.jpg" alt="" width="60%"/></p>
+<br>
+
+<p><b># Compute failure</b></p>
+<p><img src="Images/compute-failure.PNG" alt="" width="60%"/></p>
 <br>
 <p><b># When is Compute HA important?</b></p>
 <p>- Pets vs Cattle</p>
@@ -72,15 +78,18 @@
 <p>- Clusters inside / between guest VM instances are not OS-agnostic, and require cloud users to modify guest images (installing & configuring cluster software)</p>
 <p>- Cloud is supposed to make things easier not harder!</p>
 <br>
+<p><img src="Images/common-architecture.PNG" alt="" width="60%"/></p>
+<br>
 <p><b># Compute HA in SUSE OpenStack Cloud</b></p>
-<p>- NovaCompute / NovaEvacuate OCF Agents</p>
+<p><img src="Images/nova-evacuate-OCF.PNG" alt="" width="60%"/></p>
+<p>- OCF (Open Cluster Format)</p>
 <p>- Pros</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;Ready for production now</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;Commercially supported by SUSE</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;RAs upstream in openstack-resource-agents repo:</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/openstack/openstack-resource-agents/tree/master/ocf</p>
 <p>- Cons</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;Known limitations (known bugs):</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Known limitations (not bugs):</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;Only handles failure of compute node, not of VMs, or nova-compute</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;Some corner cases still problematic, e.g. if nova fails during recovery</p>
 <br>
@@ -91,5 +100,5 @@
 <p>- When do we need Shared Storage?</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;If /var/lib/nova/instances is shared, VM's ephemeral disk will be preserved during recovery</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;Otherwise: VM disk will be lost, recovery will need to rebuild VM from image</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;Either way, /var/lib/glance/images should be shared across all controllers (unless using Swift / Ceph)
-otherwise nova might fail to retrieve image from glance</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Either way, /var/lib/glance/images should be shared across all controllers (unless using Swift / Ceph)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Otherwise nova might fail to retrieve image from glance</p>

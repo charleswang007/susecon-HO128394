@@ -45,7 +45,11 @@
 <p>3. <b>Vagrant</b> >= 1.6.5</p>
 <h2>My Environment</h2>
 <img src="Images/env.png" alt="" width="500"/>
-<h2>Installation</h2>
+<h2>Your Environment</h2>
+<p>RAM: 32 GB</p>
+<p>Disk: 1 TB</p>
+<p>OS: openSUSE Leap 42.2 (iSO: <a href="https://s3-us-west-2.amazonaws.com/lab-machine-image/files.html" target="_blank">https://s3-us-west-2.amazonaws.com/lab-machine-image/files.html</a>)</p>
+<h2>Installation (installer provided --- see bottom of page)</h2>
 <p><span class="style4">Get installaton source</span></p>
 <p>git clone <a href="https://github.com/SUSE-Cloud/suse-cloud-vagrant.git" target="_blank">https://github.com/SUSE-Cloud/suse-cloud-vagrant.git</a></p>
 <p><span class="style4">Install vagrant & libvirt</span></p>
@@ -80,7 +84,8 @@
 <p>exit</p>
 <p><span class="style4">Verification</span></p>
 <p>browse 192.168.124.10 or localhost:8000 (credential: crowbar/crowbar), all 5 nodes should be renamed and in Ready state</p>
-<p><img src="Images/dashboard.PNG" alt="" width="100%"/></p>
+<p><img src="Images/dashboard1.PNG" alt="" width="75%"/></p>
+<h2>Compute-HA Lab</h2>
 <p><span class="style4">Add remotes to Pacemaker cluster</span></p>
 <p>browse 192.168.124.10, edit pacemaker "service" barclamp</p>
 <p>drag compute1 & compute2 to "Deployment" --> "pacemaker-remote" section</p>
@@ -147,7 +152,7 @@
 <p>crm_mon &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// monitor cluster status</span></p>
 <p><span class="style4">Open permission for console.log in /var/lib/nova</span></p>
 <p>cd /var/lib/ chown -R nova:nova nova &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// option 1</span></p>
-<p>cd /var/lib/ chmod -R 777 nova &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// option 2</span</p>
+<p>cd /var/lib/ chmod -R 777 nova &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// option 2</span></p>
 
 <h2>Test Compute Node Failover</h2>
 <p>vagrant ssh COMPUTE_HOST</p>
@@ -175,11 +180,14 @@
 <p>4. crm status shows compute node offline (then back online)</p>
 <p>5. Verify compute node was fenced</p>
 <p>6. Check /var/log/messages on DC</p>
+<p><span class="style6">The DC (Designated Controller) node is where all the decisions are made and if the current DC fails a new one is elected from the remaining cluster nodes. The choice of DC is of no significance to an administrator beyond the fact that its logs will generally be more interesting. <a href="http://clusterlabs.org/doc/en-US/Pacemaker/1.0/html/Pacemaker_Explained/s-cluster-status.html" target="_blank">http://clusterlabs.org/doc/en-US/Pacemaker/1.0/html/Pacemaker_Explained/s-cluster-status.html</a></span></p>
 <p>7. Verify VM moved to another compute node</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;nova list --fields host,name</p>
 
-<h2>Lab Installer for Steps Before "Add remotes to Pacemaker cluster"</h2>
-<p>dropbox link: <a href="https://www.dropbox.com/sh/nc3wte7janb0ds1/AAAI_PViQBVIa3MbdUssoO9Da?dl=0" target="_blank">download</a></p>
+<h2>Lab Installer that does every step in section "Installation"</h2>
+<p><span class="style4">links</span></p>
+<p><a href="https://www.dropbox.com/sh/nc3wte7janb0ds1/AAAI_PViQBVIa3MbdUssoO9Da?dl=0" target="_blank">dropbox</a></p>
+<p><a href="https://github.com/charleswang007/susecon-HO128394" target="_blank">github</a></p>
 <p><span class="style4">to install</span></p>
 <p>bash install_lab_env.sh</p>
 <p><span class="style4">to uninstall</span></p>
