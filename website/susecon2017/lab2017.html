@@ -104,7 +104,6 @@
 <p>crm status</p>
 <p><span class="style4">Nova setup</span></p>
 <p><p>browse 192.168.124.10, edit nova barclamp</p>
-<p>drag "services" to section "nova-controller" (might alreay be done)</p>
 <p>drag "services (2 remote notes)" to section "nova-compute-kvm"</p>
 <p>click "Apply" button after finish</p>
 <p><span class="style4">Monitor proposal progress (optional)</span></p>
@@ -120,7 +119,7 @@
 <p>Locate shared directories via nfs_client barclamp</p>
 <p>Check /etc/exports on admin server</p>
 <p>Check /etc/fstab on controller/compute nodes</p>
-<p>Run mount on controller/compute nodes</p>
+<p>Run mount on controller/compute nodes<span class="style6">// if no arguments are given to mount, the list of mounted filesystems is printed.</span></p>
 <p><span class="style4">Boot a VM</span></p>
 <p>vagrant ssh controller1</p>
 <p>sudo -i</p>
@@ -151,9 +150,12 @@
 <p>crm resource show nova-evacuate &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// find node running nova-evacuate</span></p>
 <p>tail -f /var/log/messages | grep NovaEvacuate &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// on that node, check log messages for NovaEvacuate workflow</span></p>
 <p>crm_mon &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// monitor cluster status</span></p>
-<p><span class="style4">Open permission for console.log in /var/lib/nova</span></p>
-<p>cd /var/lib/ chown -R nova:nova nova &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// option 1</span></p>
-<p>cd /var/lib/ chmod -R 777 nova &nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// option 2</span></p>
+<p><span class="style4">Open permission for console.log in /var/lib/nova</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="style6">// https://bugs.launchpad.net/nova/+bug/1691831</span></p></p>
+
+<p>vagrant ssh compute1</p>
+<p>sudo -i</p>
+<p>cd /var/lib/</p>
+<p>chown -R nova:nova nova</p>
 
 <h2>Test Compute Node Failover</h2>
 <p>vagrant ssh COMPUTE_HOST</p>
@@ -169,10 +171,15 @@
 <p><img src="Images/fence_compute.PNG" alt="" width="100%"/></p>
 <p>/var/log/messages on controller2 (NovaEvacuate completes)</p>
 <p><img src="Images/nova_evacuate.PNG" alt="" width="100%"/></p>
-<p>evacuation works</p>
+<p>Evacuation works. Testvm moved from compute1 to compute2.</p>
 <p><img src="Images/evacuation_works1.PNG" alt="" width="100%"/></p>
 
-<h2>Expected Output</h2>
+<h2>More Verification Commands [OPTIONAL]</h2>
+<p><span class="style6">// run on either controller</span></p>
+<p>crm configure show fencing_topology</p>
+<p>attrd_updater --query --all --name=evacuate</p>
+
+<h2>Expected Result</h2>
 <p>1. Ping to the VM is interrupted, then resumed</p>
 <p>2. Ping to the compute node is interrupted, then resumed</p>
 <p>3. Log messages show:</p>
