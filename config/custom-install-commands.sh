@@ -9,16 +9,15 @@ on_admin () {
 
 set -e
 
-run sudo -E zypper --gpg-auto-import-keys --no-gpg-checks --non-interactive in ${HOME}/course_files/${COURSE_NUM}/vagrant.rpm
-run sudo -E vagrant plugin install vagrant-libvirt
+run sudo zypper --gpg-auto-import-keys --no-gpg-checks --non-interactive in ${HOME}/course_files/${COURSE_NUM}/*.rpm
 
 pushd ${HOME}/course_files/${COURSE_NUM}
-#run vagrant box add ${HOME}/course_files/${COURSE_NUM}/cloud7-admin-vagrant.x86_64-0.0.1.libvirt.json
-#run vagrant box add ${HOME}/course_files/${COURSE_NUM}/sles12sp2.x86_64-0.0.1.libvirt.json
+run vagrant box add ${HOME}/course_files/${COURSE_NUM}/cloud7-admin-vagrant.x86_64-0.0.1.libvirt.json
+run vagrant box add ${HOME}/course_files/${COURSE_NUM}/sles12sp2.x86_64-0.0.1.libvirt.json
 popd
 
-#cd ${HOME}/course_files/${COURSE_NUM}/
-#run tar xf suse-cloud-vagrant.tar
+cd ${HOME}/course_files/${COURSE_NUM}/
+run tar xf suse-cloud-vagrant.tar
 
 cd ${HOME}/course_files/${COURSE_NUM}/suse-cloud-vagrant/vagrant
 
