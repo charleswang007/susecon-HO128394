@@ -10,7 +10,9 @@ on_admin () {
 set -e
 
 run sudo zypper --gpg-auto-import-keys --no-gpg-checks --non-interactive in libvirt-devel
-run sudo mv /opt/vagrant/embedded/lib/libreadline.so.6{,.disabled}
+if [ ! -f /opt/vagrant/embedded/lib/libreadline.so.6.disabled ]; then
+    run sudo mv /opt/vagrant/embedded/lib/libreadline.so.6{,.disabled}
+fi
 run vagrant plugin install vagrant-libvirt
 
 pushd ${HOME}/course_files/${COURSE_NUM}
