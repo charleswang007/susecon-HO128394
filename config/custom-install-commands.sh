@@ -9,7 +9,9 @@ on_admin () {
 
 set -e
 
-run sudo zypper --gpg-auto-import-keys --no-gpg-checks --non-interactive in ${HOME}/course_files/${COURSE_NUM}/*.rpm
+run sudo zypper --gpg-auto-import-keys --no-gpg-checks --non-interactive in libvirt-devel
+run sudo mv /opt/vagrant/embedded/lib/libreadline.so.6{,.disabled}
+run vagrant plugin install vagrant-libvirt
 
 pushd ${HOME}/course_files/${COURSE_NUM}
 run vagrant box add ${HOME}/course_files/${COURSE_NUM}/cloud7-admin-vagrant.x86_64-0.0.1.libvirt.json
